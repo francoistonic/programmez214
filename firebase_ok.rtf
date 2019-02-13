@@ -1,0 +1,192 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\csgenericrgb\c0\c0\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2         <input id="email" type="email"/>\
+        <input id="password" type="password"/>\
+        <button id="create">Create</button>\
+        <button id="login">Login</button>\
+        <button id="reset">Reset</button>\
+\
+\
+\
+        $("#create").click(function ()\
+        \{\
+            var email = $("#email").val();\
+            var password = $("#password").val();\
+            firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) \{\
+                console.log(error);\
+            \});\
+        \});\
+\
+        $("#login").click(function ()\
+        \{\
+            var email = $("#email").val();\
+            var password = $("#password").val();\
+            firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) \{\
+                console.log(error);\
+            \});\
+        \});\
+\
+\
+        $("#reset").click(function ()\
+        \{\
+            var email = $("#email").val();\
+            firebase.auth().sendPasswordResetEmail(email).then(function () \{\
+                // Email envoy\'e9.\
+            \}).catch(function (error) \{\
+                console.log(error);\
+            \});\
+        \});\
+\
+\
+\
+    $("#create").click(function ()\
+        \{\
+            var email = $("#email").val();\
+            var password = $("#password").val();\
+            firebase.auth().createUserWithEmailAndPassword(email, password).then(function () \{\
+                var user = firebase.auth().currentUser;\
+                user.sendEmailVerification().then(function () \{\
+                    // Email sent.\
+                \}).catch(function (error) \{\
+                    console.log(error);\
+                \});\
+            \}).catch(function (error) \{\
+                console.log(error);\
+            \});\
+        \});\
+\
+\
+\
+\
+        <button id="google">log</button>\
+        <img id="avatar"/>\
+\
+\
+        $("#google").click(function () \{\
+            var provider = new firebase.auth.GoogleAuthProvider();\
+            firebase.auth().signInWithPopup(provider).then(function (result) \{\
+                var token = result.credential.accessToken;\
+                var user = result.user;\
+                if (user != null) \{\
+                    photoUrl =;\
+                    $("#avatar").attr("src", user.photoUR);\
+                    var emailVerified = user.emailVerified;\
+                \}\
+            \}).catch(function (error) \{\
+                console.log(error);\
+            \});\
+        \});\
+\
+\
+\
+        <button id="phone">log phone</button>\
+        <input id="tel" type="text" value="+3399999999"/>\
+        <input id="code" type="text" value=""/>\
+        <button id="btnCode">Code valide</button>\
+        <div id="captcha"></div>\
+\
+\
+\
+$("#phone").click(function () \{\
+            var phoneNumber = $("#tel").val();\
+            firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)\
+                    .then(function (confirmationResult) \{\
+                        window.confirmationResult = confirmationResult;\
+                        $("#btnCode").click(function () \{\
+                            var code = $("#code").val();\
+                            confirmationResult.confirm(code).then(function (result) \{\
+                                var user = result.user;\
+			// on est loggu\'e9\
+                            \}).catch(function (error) \{\
+                                console.log(error);\
+                            \});\
+\
+                        \});\
+                    \}).catch(function (error) \{\
+                    console.log(error);\
+            \});\
+        \});\
+\
+\
+$("#logout").click(function ()\
+        \{\
+            firebase.auth().signOut().then(function () \{\
+                // succ\'e9s\
+            \}).catch(function (error) \{\
+                console.log(error);\
+            \});\
+        \});\
+\
+\
+\
+    firebase.auth().onAuthStateChanged(function (user)\
+        \{\
+            if (user) \{\
+                // User is signed in.\
+                var displayName = user.displayName;\
+                var email = user.email;\
+                var emailVerified = user.emailVerified;\
+                var photoURL = user.photoURL;\
+                var isAnonymous = user.isAnonymous;\
+                var uid = user.uid;\
+                var providerData = user.providerData;\
+                l("Sign in");\
+            \} else \{\
+                l("Sign out");\
+                // User is signed out.\
+                // ...\
+            \}\
+        \});\
+\
+\
+var playersRef = firebase.database().ref("players/");\
+                playersRef.set(\{\
+                    John: \{\
+                        number: 1,\
+                        age: 30\
+                    \},\
+\
+                    Amanda: \{\
+                        number: 2,\
+                        age: 20\
+                    \}\
+                \});\
+\
+\
+\
+        var messagesRef = firebase.database().ref("messages/");\
+        messagesRef.on('child_added', function (data) \{\
+            var val = data.val().text;\
+            $("#resultat").append(val + "<br/>");\
+        \});\
+\
+        $("#message").change(function ()\
+        \{\
+            var val = $("#message").val();\
+            var newmsg = messagesRef.push();\
+            newmsg.set(\{text: val\});\
+        \});\
+\
+\
+        <input id="file" type="file"/>\
+        <img id="img" />\
+\
+\
+\
+       $("#file").change(function ()\
+        \{\
+            var file = this.files[0];\
+            var storageRef = firebase.storage().ref().chi
+\f1 \cf0 ld("file");\
+            storageRef.put(file).then(function (snapshot) \{\
+                $("#img").attr("src", snapshot.metadata.downloadURLs[0]);\
+            \});\
+        \});\
+\
+\
+}
